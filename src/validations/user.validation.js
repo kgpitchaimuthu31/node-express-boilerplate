@@ -45,10 +45,21 @@ const deleteUser = {
   }),
 };
 
+const checkExistsByPhone = {
+  query: Joi.object().keys({
+    phone: Joi.string()
+      .trim()
+      .required()
+      .pattern(/^[0-9]{10}$/)
+      .messages({ 'string.pattern.base': 'phone must be a 10-digit mobile number' }),
+  }),
+};
+
 module.exports = {
   createUser,
   getUsers,
   getUser,
   updateUser,
   deleteUser,
+  checkExistsByPhone
 };

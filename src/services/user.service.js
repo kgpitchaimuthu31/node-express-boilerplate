@@ -1,5 +1,8 @@
 const httpStatus = require('http-status');
 const { User } = require('../models');
+const { UsersCollection } = require('../models');
+const logger = require('../config/logger');
+
 const ApiError = require('../utils/ApiError');
 
 /**
@@ -79,6 +82,23 @@ const deleteUserById = async (userId) => {
   return user;
 };
 
+const getUsersCollectionUserByPhone = async (phone) => {
+  console.log(getUsersCollectionUserByPhone, 'Muthu here')
+  const normalized = String(phone).trim();
+
+  const total = await UsersCollection.countDocuments();
+  const sample = await UsersCollection.find().limit(10).lean();
+  let user = await UsersCollection.findOne({ phone_number: normalized });
+  if (!user && /^\d+$/.test(normalized)) {
+    user = await UsersCollection.findOne({ phone_number: Number(normalized) });
+    if (user) {
+      logger.debug('[Users_Collection] match found using numeric phone_number (DB stores number, not string)');
+    }
+  }
+
+  return user;
+};
+
 module.exports = {
   createUser,
   queryUsers,
@@ -86,4 +106,5 @@ module.exports = {
   getUserByEmail,
   updateUserById,
   deleteUserById,
+  getUsersCollectionUserByPhone
 };

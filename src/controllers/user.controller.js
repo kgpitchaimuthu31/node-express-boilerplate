@@ -9,6 +9,14 @@ const createUser = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(user);
 });
 
+const checkUserExistsByPhone = catchAsync(async (req, res) => {
+  const user = await userService.getUsersCollectionUserByPhone(req.query.phone);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'No user found with this phone number');
+  }
+  res.status(httpStatus.OK).send({ exists: true, user });
+});
+
 const getUsers = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'role']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
@@ -40,4 +48,5 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
+  checkUserExistsByPhone
 };
