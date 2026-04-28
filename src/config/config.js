@@ -3,7 +3,6 @@ const path = require('path');
 const Joi = require('joi');
 
 dotenv.config({ path: path.join(__dirname, '../../.env.example') });
-console.log('Muthu Here', dotenv.config({ path: path.join(__dirname, '../../.env.example') }));
 
 const envVarsSchema = Joi.object()
   .keys({

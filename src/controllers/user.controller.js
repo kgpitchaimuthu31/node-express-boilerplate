@@ -17,10 +17,43 @@ const checkUserExistsByPhone = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send({ exists: true, user });
 });
 
+const validateOtp = catchAsync(async (req, res) => {
+  const { accessToken, expiresIn } = await userService.issueOtpAccessTokenByPhone(req.body.phone);
+  res.status(httpStatus.OK).send({
+    message: 'OTP validated successfully',
+    accessToken,
+    expiresIn,
+  });
+});
+
+const setPasswordByPhone = catchAsync(async (req, res) => {
+  await userService.setUsersCollectionPasswordByPhone(req.body.phone, req.body.accessToken, req.body.password);
+  res.status(httpStatus.OK).send({ message: 'Password saved successfully' });
+});
+
+const signInByPhone = catchAsync(async (req, res) => {
+  const { token, expiresIn } = await userService.signInUsersCollectionByPhone(req.body.phone, req.body.password);
+  res.status(httpStatus.OK).send({
+    message: 'Sign in successful',
+    token,
+    expiresIn,
+  });
+});
+
 const getUsers = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'role']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await userService.queryUsers(filter, options);
+  res.send(result);
+});
+
+const getCollegeAdmins = catchAsync(async (req, res) => {
+  const result = await userService.listCollegeAdmins();
+  res.send(result);
+});
+
+const getUsersCollectionByRole = catchAsync(async (req, res) => {
+  const result = await userService.listUsersCollectionByRole(req.query.role);
   res.send(result);
 });
 
@@ -37,6 +70,11 @@ const updateUser = catchAsync(async (req, res) => {
   res.send(user);
 });
 
+const updateUsersCollectionUser = catchAsync(async (req, res) => {
+  const user = await userService.updateUsersCollectionUserById(req.params.userId, req.body);
+  res.send(user);
+});
+
 const deleteUser = catchAsync(async (req, res) => {
   await userService.deleteUserById(req.params.userId);
   res.status(httpStatus.NO_CONTENT).send();
@@ -45,8 +83,14 @@ const deleteUser = catchAsync(async (req, res) => {
 module.exports = {
   createUser,
   getUsers,
+  getCollegeAdmins,
+  getUsersCollectionByRole,
   getUser,
   updateUser,
+  updateUsersCollectionUser,
   deleteUser,
-  checkUserExistsByPhone
+  checkUserExistsByPhone,
+  validateOtp,
+  setPasswordByPhone,
+  signInByPhone,
 };

@@ -7,38 +7,60 @@ const usersCollectionSchema = mongoose.Schema(
       type: String,
       trim: true,
       index: true,
-    },
-    first_name: {
-      type: String,
-      trim: true,
-    },
-    last_name: {
-      type: String,
-      trim: true,
-    },
-    is_whatsapp_enabled: {
-      type: Boolean,
-      default: false,
+      required: true,
     },
     email: {
       type: String,
       trim: true,
       lowercase: true,
     },
-    college: {
+    name: {
       type: String,
       trim: true,
     },
-    is_placed: {
+    password_hash: {
+      type: String,
+      trim: true,
+      private: true,
+    },
+    role: {
+      type: String,
+      enum: ['super_admin', 'college_admin', 'dept_admin', 'student', 'recruiter'],
+      default: 'student',
+    },
+    is_active: {
       type: Boolean,
-      default: false,
+      default: true,
+    },
+    jwt: {
+      type: String,
+      trim: true,
+      private: true,
+    },
+    access_token: {
+      type: String,
+      trim: true,
+      private: true,
+    },
+    access_token_expires_at: {
+      type: Date,
+      private: true,
     },
     created_at: {
       type: Date,
+      default: Date.now,
+    },
+    last_login_at: {
+      type: Date,
+    },
+    profile_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'UserProfile',
+      index: true,
     },
   },
   {
-    collection: 'Users_Collection',
+    collection: 'users',
     timestamps: false,
   }
 );

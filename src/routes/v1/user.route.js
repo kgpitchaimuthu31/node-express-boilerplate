@@ -6,11 +6,24 @@ const userController = require('../../controllers/user.controller');
 
 const router = express.Router();
 
+router.route('/exists-by-phone').get(validate(userValidation.checkExistsByPhone), userController.checkUserExistsByPhone);
+
+router.route('/validate-otp').post(validate(userValidation.validateOtp), userController.validateOtp);
+
+router.route('/set-password').post(validate(userValidation.setPasswordByPhone), userController.setPasswordByPhone);
+
+router.route('/sign-in').post(validate(userValidation.signInByPhone), userController.signInByPhone);
+
+router.route('/college-admins').get(validate(userValidation.getCollegeAdmins), userController.getCollegeAdmins);
 
 router
-  .route('/exists-by-phone')
-  .get(validate(userValidation.checkExistsByPhone), userController.checkUserExistsByPhone);
-  
+  .route('/collection-users')
+  .get(validate(userValidation.getUsersCollectionByRole), userController.getUsersCollectionByRole);
+
+router
+  .route('/collection-users/:userId')
+  .patch(validate(userValidation.updateUsersCollectionUser), userController.updateUsersCollectionUser);
+
 router
   .route('/')
   .post(auth('manageUsers'), validate(userValidation.createUser), userController.createUser)
@@ -21,8 +34,6 @@ router
   .get(auth('getUsers'), validate(userValidation.getUser), userController.getUser)
   .patch(auth('manageUsers'), validate(userValidation.updateUser), userController.updateUser)
   .delete(auth('manageUsers'), validate(userValidation.deleteUser), userController.deleteUser);
-
-
 
 module.exports = router;
 
